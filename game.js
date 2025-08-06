@@ -1,9 +1,6 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
-canvas.width = 480;
-canvas.height = 640;
-
 // Загрузка спрайтов
 const playerImg = new Image();
 playerImg.src = "player.png";
@@ -12,20 +9,35 @@ const enemyImg = new Image();
 enemyImg.src = "enemy.png";
 
 const playerBulletImg = new Image();
-playerBulletImg.src = "bullet1.png"; // Пуля игрока (8x16)
+playerBulletImg.src = "bullet1.png";
 
 const enemyBulletImg = new Image();
-enemyBulletImg.src = "bullet.png"; // Пуля врага (16x16)
+enemyBulletImg.src = "bullet.png";
 
 // Игрок
 const player = {
-    x: canvas.width / 2 - 32,
-    y: canvas.height - 80,
+    x: 0,
+    y: 0,
     width: 64,
     height: 64,
     speed: 5,
     bullets: []
 };
+
+function positionPlayer() {
+    player.x = canvas.width / 2 - player.width / 2;
+    player.y = canvas.height - player.height - 20;
+}
+
+// Масштаб под экран
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    positionPlayer();
+    spawnEnemies();
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
 
 // Враги
 let enemies = [];
@@ -38,12 +50,8 @@ let lastEnemyFireTime = 0;
 const keys = {};
 document.addEventListener("keydown", e => keys[e.code] = true);
 document.addEventListener("keyup", e => keys[e.code] = false);
-
-// Стрельба игрока
 document.addEventListener("keydown", e => {
-    if (e.code === "Space") {
-        shootPlayerBullet();
-    }
+    if (e.code === "Space") shootPlayerBullet();
 });
 
 function shootPlayerBullet() {
@@ -68,9 +76,12 @@ function shootEnemyBullet(enemy) {
 
 function spawnEnemies() {
     enemies = [];
-    for (let i = 0; i < 5; i++) {
+    const count = 5;
+    const spacing = (canvas.width - count * 64) / (count + 1);
+
+    for (let i = 0; i < count; i++) {
         enemies.push({
-            x: 50 + i * 80,
+            x: spacing + i * (64 + spacing),
             y: 50,
             width: 64,
             height: 64,
@@ -80,18 +91,10 @@ function spawnEnemies() {
 }
 
 function update(timestamp) {
-    if (keys["ArrowLeft"] && player.x > 0) {
-        player.x -= player.speed;
-    }
-    if (keys["ArrowRight"] && player.x < canvas.width - player.width) {
-        player.x += player.speed;
-    }
-    if (keys["ArrowUp"] && player.y > 0) {
-        player.y -= player.speed;
-    }
-    if (keys["ArrowDown"] && player.y < canvas.height - player.height) {
-        player.y += player.speed;
-    }
+    if (keys["ArrowLeft"] && player.x > 0) player.x -= player.speed;
+    if (keys["ArrowRight"] && player.x < canvas.width - player.width) player.x += player.speed;
+    if (keys["ArrowUp"] && player.y > 0) player.y -= player.speed;
+    if (keys["ArrowDown"] && player.y < canvas.height - player.height) player.y += player.speed;
 
     player.bullets.forEach((bullet, index) => {
         bullet.y -= bullet.speed;
@@ -115,26 +118,20 @@ function update(timestamp) {
 
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Игрок
     ctx.drawImage(playerImg, player.x, player.y, player.width, player.height);
 
-    // Враги
     enemies.forEach(enemy => {
         ctx.drawImage(enemyImg, enemy.x, enemy.y, enemy.width, enemy.height);
     });
 
-    // Пули игрока
     player.bullets.forEach(bullet => {
         ctx.drawImage(playerBulletImg, bullet.x, bullet.y, bullet.width, bullet.height);
     });
 
-    // Пули врагов
     enemyBullets.forEach(bullet => {
         ctx.drawImage(enemyBulletImg, bullet.x, bullet.y, bullet.width, bullet.height);
     });
 
-    // Волна
     ctx.font = "16px monospace";
     ctx.fillStyle = "white";
     ctx.fillText(`Волна ${wave}`, 10, 20);
@@ -146,7 +143,7 @@ function gameLoop(timestamp) {
     requestAnimationFrame(gameLoop);
 }
 
-// Старт игры после загрузки всех изображений
+// ✅ Один блок загрузки изображений
 let imagesToLoad = [playerImg, enemyImg, playerBulletImg, enemyBulletImg];
 let imagesLoaded = 0;
 
@@ -154,6 +151,7 @@ imagesToLoad.forEach(img => {
     img.onload = () => {
         imagesLoaded++;
         if (imagesLoaded === imagesToLoad.length) {
+            resizeCanvas();
             spawnEnemies();
             requestAnimationFrame(gameLoop);
         }
