@@ -33,11 +33,12 @@ enemyBulletImg.src = "bullet.png"; // Пуля врага (16x16)
 
 // Масштабируем под экран устройства
 function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    positionPlayer();  // Обновить позицию игрока
-    spawnEnemies();    // Переспавнить врагов по новым координатам
+    canvas.width = window.visualViewport ? window.visualViewport.width : window.innerWidth;
+    canvas.height = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    positionPlayer();
+    spawnEnemies();
 }
+
 
 // Установка позиции игрока по центру низа
 function positionPlayer() {
