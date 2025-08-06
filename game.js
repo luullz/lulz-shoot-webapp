@@ -31,7 +31,7 @@ const player = {
 let enemies = [];
 let enemyBullets = [];
 let wave = 1;
-let enemyFireInterval = 2000; // Каждые 2 секунды враги стреляют
+let enemyFireInterval = 2000;
 let lastEnemyFireTime = 0;
 
 // Управление
@@ -80,7 +80,6 @@ function spawnEnemies() {
 }
 
 function update(timestamp) {
-    // Движение игрока
     if (keys["ArrowLeft"] && player.x > 0) {
         player.x -= player.speed;
     }
@@ -94,24 +93,20 @@ function update(timestamp) {
         player.y += player.speed;
     }
 
-    // Движение пуль игрока
     player.bullets.forEach((bullet, index) => {
         bullet.y -= bullet.speed;
         if (bullet.y < 0) player.bullets.splice(index, 1);
     });
 
-    // Движение врагов
     enemies.forEach(enemy => {
         enemy.y += 0.5;
     });
 
-    // Вражеская стрельба
     if (timestamp - lastEnemyFireTime > enemyFireInterval) {
         enemies.forEach(enemy => shootEnemyBullet(enemy));
         lastEnemyFireTime = timestamp;
     }
 
-    // Движение вражеских пуль
     enemyBullets.forEach((bullet, index) => {
         bullet.y += bullet.speed;
         if (bullet.y > canvas.height) enemyBullets.splice(index, 1);
@@ -139,7 +134,7 @@ function draw() {
         ctx.drawImage(enemyBulletImg, bullet.x, bullet.y, bullet.width, bullet.height);
     });
 
-    // Текст волны
+    // Волна
     ctx.font = "16px monospace";
     ctx.fillStyle = "white";
     ctx.fillText(`Волна ${wave}`, 10, 20);
@@ -151,6 +146,16 @@ function gameLoop(timestamp) {
     requestAnimationFrame(gameLoop);
 }
 
-// Старт
-spawnEnemies();
-requestAnimationFrame(gameLoop);
+// Старт игры после загрузки всех изображений
+let imagesToLoad = [playerImg, enemyImg, playerBulletImg, enemyBulletImg];
+let imagesLoaded = 0;
+
+imagesToLoad.forEach(img => {
+    img.onload = () => {
+        imagesLoaded++;
+        if (imagesLoaded === imagesToLoad.length) {
+            spawnEnemies();
+            requestAnimationFrame(gameLoop);
+        }
+    };
+});
