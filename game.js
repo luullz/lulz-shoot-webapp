@@ -1,6 +1,48 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
+let isTouching = false;
+let lastTouchX = 0;
+let lastTouchY = 0;
+
+canvas.addEventListener('touchstart', (e) => {
+    e.preventDefault(); // предотвратить скролл страницы при касании
+    if (e.touches.length === 1) {
+        isTouching = true;
+        lastTouchX = e.touches[0].clientX;
+        lastTouchY = e.touches[0].clientY;
+    }
+});
+
+canvas.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    if (isTouching && e.touches.length === 1) {
+        let touchX = e.touches[0].clientX;
+        let touchY = e.touches[0].clientY;
+
+        let deltaX = touchX - lastTouchX;
+        let deltaY = touchY - lastTouchY;
+
+        player.x += deltaX;
+        player.y += deltaY;
+
+        // Ограничиваем движение в пределах канваса
+        if (player.x < 0) player.x = 0;
+        if (player.x > canvas.width - player.width) player.x = canvas.width - player.width;
+        if (player.y < 0) player.y = 0;
+        if (player.y > canvas.height - player.height) player.y = canvas.height - player.height;
+
+        lastTouchX = touchX;
+        lastTouchY = touchY;
+    }
+});
+
+canvas.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    isTouching = false;
+});
+
+
 // Враги — перенесены вверх, чтобы избежать ошибки инициализации
 let enemies = [];
 let enemyBullets = [];
