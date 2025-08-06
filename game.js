@@ -175,6 +175,16 @@ function update(timestamp) {
         enemy.y += 0.5;
     });
 
+ // Проверка попаданий пуль игрока во врагов
+    player.bullets.forEach((bullet, bIndex) => {
+        enemies.forEach((enemy, eIndex) => {
+            if (isColliding(bullet, enemy)) {
+                enemies.splice(eIndex, 1);
+                player.bullets.splice(bIndex, 1);
+            }
+        });
+    });
+
     // Стрельба врагов
     if (timestamp - lastEnemyFireTime > enemyFireInterval) {
         enemies.forEach(enemy => shootEnemyBullet(enemy));
