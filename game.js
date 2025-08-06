@@ -34,6 +34,12 @@ canvas.addEventListener('touchmove', (e) => {
 
         lastTouchX = touchX;
         lastTouchY = touchY;
+
+          // Авто-стрельба при движении пальцем с контролем частоты выстрелов
+        let now = performance.now();
+        if (now - lastPlayerShotTime > playerShotInterval) {
+            shootPlayerBullet();
+            lastPlayerShotTime = now;
     }
 });
 
@@ -150,6 +156,12 @@ function update(timestamp) {
     }
     if (keys["ArrowDown"] && player.y < canvas.height - player.height) {
         player.y += player.speed;
+    }
+
+     // Автоматическая стрельба при движении с задержкой
+    if (isMoving && timestamp - lastPlayerShotTime > playerShotInterval) {
+        shootPlayerBullet();
+        lastPlayerShotTime = timestamp;
     }
 
     // Пули игрока
