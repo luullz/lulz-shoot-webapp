@@ -1,12 +1,14 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
+let lastPlayerShotTime = 0;
+const playerShotInterval = 300; // время между выстрелами в мс
 let isTouching = false;
 let lastTouchX = 0;
 let lastTouchY = 0;
 
 canvas.addEventListener('touchstart', (e) => {
-    e.preventDefault(); // предотвратить скролл страницы при касании
+    e.preventDefault();
     if (e.touches.length === 1) {
         isTouching = true;
         lastTouchX = e.touches[0].clientX;
@@ -35,11 +37,12 @@ canvas.addEventListener('touchmove', (e) => {
         lastTouchX = touchX;
         lastTouchY = touchY;
 
-          // Авто-стрельба при движении пальцем с контролем частоты выстрелов
+        // Авто-стрельба при движении пальцем с контролем частоты выстрелов
         let now = performance.now();
         if (now - lastPlayerShotTime > playerShotInterval) {
             shootPlayerBullet();
             lastPlayerShotTime = now;
+        }
     }
 });
 
@@ -47,6 +50,7 @@ canvas.addEventListener('touchend', (e) => {
     e.preventDefault();
     isTouching = false;
 });
+
 
 
 // Враги — перенесены вверх, чтобы избежать ошибки инициализации
@@ -158,11 +162,7 @@ function update(timestamp) {
         player.y += player.speed;
     }
 
-     // Автоматическая стрельба при движении с задержкой
-    if (isMoving && timestamp - lastPlayerShotTime > playerShotInterval) {
-        shootPlayerBullet();
-        lastPlayerShotTime = timestamp;
-    }
+
 
     // Пули игрока
     player.bullets.forEach((bullet, index) => {
