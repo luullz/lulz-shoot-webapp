@@ -147,6 +147,15 @@ function shootEnemyBullet(enemy) {
     });
 }
 
+function isColliding(a, b) {
+    return (
+        a.x < b.x + b.width &&
+        a.x + a.width > b.x &&
+        a.y < b.y + b.height &&
+        a.y + a.height > b.y
+    );
+}
+
 function update(timestamp) {
     // Управление игроком
     if (keys["ArrowLeft"] && player.x > 0) {
