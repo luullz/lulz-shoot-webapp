@@ -223,14 +223,9 @@ function update(timestamp) {
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-// === Отрисовка фона ===
-let aspectRatio = backgroundImg.width / backgroundImg.height;
-let bgWidth = canvas.width;
-let bgHeight = bgWidth / aspectRatio;
 
-// Две копии, чтобы фон тек бесконечно
-ctx.drawImage(backgroundImg, 0, bgY - bgHeight, bgWidth, bgHeight);
-ctx.drawImage(backgroundImg, 0, bgY, bgWidth, bgHeight);
+ctx.drawImage(backgroundImg, 0, bgY - canvas.height, canvas.width, canvas.height);
+ctx.drawImage(backgroundImg, 0, bgY, canvas.width, canvas.height);
 
 
     // Игрок
