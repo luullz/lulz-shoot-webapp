@@ -7,6 +7,9 @@ let isTouching = false;
 let lastTouchX = 0;
 let lastTouchY = 0;
 
+let bgY = 0;
+let bgScrollSpeed = 1;
+
 canvas.addEventListener('touchstart', (e) => {
     e.preventDefault();
     if (e.touches.length === 1) {
@@ -204,6 +207,12 @@ function update(timestamp) {
         lastEnemyFireTime = timestamp;
     }
 
+    // Прокрутка фона вниз
+    bgY += bgScrollSpeed;
+    if (bgY >= canvas.height) {
+    bgY = 0;
+    }
+
     // Пули врагов
     enemyBullets.forEach((bullet, index) => {
         bullet.y += bullet.speed;
@@ -214,8 +223,10 @@ function update(timestamp) {
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-// Рисуем фон на весь экран
-    ctx.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height);
+// Прокручиваем фон
+ctx.drawImage(backgroundImg, 0, bgY - canvas.height, canvas.width, canvas.height);
+ctx.drawImage(backgroundImg, 0, bgY, canvas.width, canvas.height);
+
 
     // Игрок
     ctx.drawImage(playerImg, player.x, player.y, player.width, player.height);
