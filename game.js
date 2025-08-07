@@ -83,6 +83,10 @@ playerBulletImg.src = "bullet1.png"; // Пуля игрока (8x16)
 const enemyBulletImg = new Image();
 enemyBulletImg.src = "bullet.png"; // Пуля врага (16x16)
 
+const backgroundImg = new Image();
+backgroundImg.src = "background.png"; // или "images/background.jpg"
+
+
 // Масштабируем под экран устройства
 function resizeCanvas() {
     canvas.width = window.visualViewport ? window.visualViewport.width : window.innerWidth;
@@ -209,6 +213,9 @@ function update(timestamp) {
 
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+// Рисуем фон на весь экран
+    ctx.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height);
 
     // Игрок
     ctx.drawImage(playerImg, player.x, player.y, player.width, player.height);
