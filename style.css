@@ -16,3 +16,13 @@ canvas {
   width: 100vw;
   height: 100vh;
 }
+#startBtn {
+  width: 128px;  /* Увеличили в 2 раза относительно 64px */
+  height: 64px;  /* Аналогично */
+  cursor: pointer; /* Чтобы курсор менялся на руку */
+  transition: transform 0.1s ease; /* Плавный переход для анимации */
+}
+
+#startBtn:active {
+  transform: scale(0.9);
+}
